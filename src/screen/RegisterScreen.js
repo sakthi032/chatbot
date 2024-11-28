@@ -1,51 +1,38 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import auth from './Auth';
 
-export default function LoginScreen({ navigation }) {
+export default function RegisterScreen({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmpassword, setconfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); // For toggling password visibility
-  const [errorMessage, setErrorMessage] = useState('');
-  const [wrpass,setwrpass]=useState('');
-  const [wrmail,setwrmail]=useState('');
-  const [wruser,setwruser]=useState('');
-  const handleLogin = async () => {
-    try {
-      // Attempt to sign in with email and password
-      await signInWithEmailAndPassword(auth, email, password);
-      // Redirect or show a success message after successful login
-      Alert.alert('Success', 'Logged in successfully');
-    } catch (error) {
-      // Handle Firebase errors and customize error messages
-      switch (error.code) {
-        case 'auth/wrong-password':
-          setErrorMessage('Incorrect Password Enter Correct Password.');
-          break;
-        case 'auth/user-not-found':
-          setErrorMessage('No user found with this email.');
-          break;
-        case 'auth/invalid-email':
-          setErrorMessage('Please enter a valid email address.');
-          break;
-        default:
-          setErrorMessage('An error occurred. Please try again.');
-      }
-    }
+
+  const handleRegister = () => {
+    password === confirmpassword
+      ? createUserWithEmailAndPassword(auth, username, password)
+          .then((userCredential) => {
+            const user = userCredential.user;
+            Alert.alert('Success', 'User registered successfully!');
+            navigation.navigate('NextScreen'); // Replace 'NextScreen' with your actual next screen name
+          })
+          .catch((error) => {
+            Alert.alert('Error', error.message);
+          })
+      : Alert.alert('Error', 'Passwords do not match. Please try again.');
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>Register</Text>
       <TextInput
         style={styles.input}
         placeholder="Username"
         value={username}
         onChangeText={setUsername}
       />
-       {/* {wrmail ? <Text style={styles.errorText}>{wrmail}</Text> : ""} */}
       <View style={styles.passwordContainer}>
         <TextInput
           style={styles.passwordInput}
@@ -54,16 +41,26 @@ export default function LoginScreen({ navigation }) {
           value={password}
           onChangeText={setPassword}
         />
-        {/* {wrpass ? <Text style={styles.errorText}>{wrpass}</Text> : ""} */}
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.toggleButton}>
           <Text style={styles.toggleText}>{showPassword ? 'Hide' : 'Show'}</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.text}>Login</Text>
+      <View style={styles.passwordContainer}>
+        <TextInput
+          style={styles.passwordInput}
+          placeholder="Confirm Password"
+          secureTextEntry={!showPassword} // Toggle secureTextEntry based on showPassword
+          value={confirmpassword}
+          onChangeText={setconfirmPassword}
+        />
+        <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.toggleButton}>
+          <Text style={styles.toggleText}>{showPassword ? 'Hide' : 'Show'}</Text>
+        </TouchableOpacity>
+      </View>
+      <TouchableOpacity style={styles.button} onPress={handleRegister}>
+        <Text style={styles.text}>Register</Text>
       </TouchableOpacity>
-      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : ""}
-      <Text style={styles.login}>Don't have an account? Register here</Text>
+      <Text style={styles.login}>Already have an account? Login here</Text>
     </View>
   );
 }
@@ -137,12 +134,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
-  },
-  errorText: {
-    color: 'red',
-    fontWeight: 'bold',
-    marginBottom:10,
-    textAlign: 'center',
-    marginTop: 10,
   },
 });
