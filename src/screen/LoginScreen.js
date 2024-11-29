@@ -3,39 +3,44 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import auth from './Auth';
+import RegisterScreen from './RegisterScreen';
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); // For toggling password visibility
   const [errorMessage, setErrorMessage] = useState('');
-  const [wrpass,setwrpass]=useState('');
-  const [wrmail,setwrmail]=useState('');
-  const [wruser,setwruser]=useState('');
+
+  const register=()=>{
+    navigation.navigate('Register')
+  };
+
   const handleLogin = async () => {
     try {
-      // Attempt to sign in with email and password
-      await signInWithEmailAndPassword(auth, email, password);
-      // Redirect or show a success message after successful login
+      setErrorMessage('')
+      await signInWithEmailAndPassword(auth, username, password);
       Alert.alert('Success', 'Logged in successfully');
+      navigation.navigate('Chatbot')
     } catch (error) {
-      // Handle Firebase errors and customize error messages
       switch (error.code) {
         case 'auth/wrong-password':
-          setErrorMessage('Incorrect Password Enter Correct Password.');
+          setErrorMessage('Incorrect password. Please try again.');
           break;
         case 'auth/user-not-found':
           setErrorMessage('No user found with this email.');
           break;
         case 'auth/invalid-email':
-          setErrorMessage('Please enter a valid email address.');
+          setErrorMessage('Invalid email format. Please enter a valid email.');
+          break;
+        case 'auth/too-many-requests':
+          setErrorMessage('Too many attempts. Please try again later.');
           break;
         default:
-          setErrorMessage('An error occurred. Please try again.');
+          setErrorMessage('An unexpected error occurred. Please try again.');
       }
     }
   };
-
+  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
@@ -45,16 +50,14 @@ export default function LoginScreen({ navigation }) {
         value={username}
         onChangeText={setUsername}
       />
-       {/* {wrmail ? <Text style={styles.errorText}>{wrmail}</Text> : ""} */}
       <View style={styles.passwordContainer}>
         <TextInput
           style={styles.passwordInput}
           placeholder="Password"
-          secureTextEntry={!showPassword} // Toggle secureTextEntry based on showPassword
+          secureTextEntry={!showPassword} 
           value={password}
           onChangeText={setPassword}
         />
-        {/* {wrpass ? <Text style={styles.errorText}>{wrpass}</Text> : ""} */}
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.toggleButton}>
           <Text style={styles.toggleText}>{showPassword ? 'Hide' : 'Show'}</Text>
         </TouchableOpacity>
@@ -63,7 +66,10 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.text}>Login</Text>
       </TouchableOpacity>
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : ""}
-      <Text style={styles.login}>Don't have an account? Register here</Text>
+      <TouchableOpacity >
+      <Text style={styles.login} onPress={register}>Don't have an account? Register here
+       </Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -126,17 +132,20 @@ const styles = StyleSheet.create({
     padding: 15,
     marginLeft: 150,
     marginRight: 150,
+    display:'inline',
   },
   text: {
     color: '#00ffff',
     fontWeight: 'bold',
     textAlign: 'center',
+    display:'inline',
   },
   login: {
     color: 'white',
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 25,
     textAlign: 'center',
+    display:'inline',
   },
   errorText: {
     color: 'red',
@@ -145,4 +154,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10,
   },
+
 });

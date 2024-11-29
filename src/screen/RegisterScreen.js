@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import auth from './Auth';
+import LoginScreen from './LoginScreen';
 
 export default function RegisterScreen({ navigation }) {
   const [username, setUsername] = useState('');
@@ -10,6 +11,9 @@ export default function RegisterScreen({ navigation }) {
   const [confirmpassword, setconfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); // For toggling password visibility
 
+  const login =()=>{
+    navigation.navigate('Login')
+  }
   const handleRegister = () => {
     password === confirmpassword
       ? createUserWithEmailAndPassword(auth, username, password)
@@ -60,7 +64,7 @@ export default function RegisterScreen({ navigation }) {
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
         <Text style={styles.text}>Register</Text>
       </TouchableOpacity>
-      <Text style={styles.login}>Already have an account? Login here</Text>
+      <TouchableOpacity onPress={login}><Text style={styles.login}>Already have an account? Login here</Text></TouchableOpacity>
     </View>
   );
 }
