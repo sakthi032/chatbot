@@ -2,25 +2,26 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { Video } from 'expo-av';
 import auth from './Auth';
 import RegisterScreen from './RegisterScreen';
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // For toggling password visibility
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const register=()=>{
-    navigation.navigate('Register')
+  const register = () => {
+    navigation.navigate('Register');
   };
 
   const handleLogin = async () => {
     try {
-      setErrorMessage('')
+      setErrorMessage('');
       await signInWithEmailAndPassword(auth, username, password);
       Alert.alert('Success', 'Logged in successfully');
-      navigation.navigate('Chatbot')
+      navigation.navigate('Chatbot');
     } catch (error) {
       switch (error.code) {
         case 'auth/wrong-password':
@@ -40,36 +41,51 @@ export default function LoginScreen({ navigation }) {
       }
     }
   };
-  
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
+      {/* Background Video */}
+      <Video
+        source={require('../../assets/background.mp4')}
+        style={StyleSheet.absoluteFillObject}
+        shouldPlay
+        isLooping
+        resizeMode="cover"
       />
-      <View style={styles.passwordContainer}>
+
+      {/* Overlay Content */}
+      <View style={styles.overlay}>
+        <Text style={styles.title}>Login</Text>
         <TextInput
-          style={styles.passwordInput}
-          placeholder="Password"
-          secureTextEntry={!showPassword} 
-          value={password}
-          onChangeText={setPassword}
+          style={styles.input}
+          placeholder="Username"
+          placeholderTextColor="#fff"
+          value={username}
+          onChangeText={setUsername}
         />
-        <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.toggleButton}>
-          <Text style={styles.toggleText}>{showPassword ? 'Hide' : 'Show'}</Text>
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.passwordInput}
+            placeholder="Password"
+            placeholderTextColor="#fff"
+            secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={setPassword}
+          />
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.toggleButton}>
+            <Text style={styles.toggleText}>{showPassword ? 'Hide' : 'Show'}</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.text}>Login</Text>
+        </TouchableOpacity>
+        {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+        <TouchableOpacity>
+          <Text style={styles.login} onPress={register}>
+            Don't have an account? Register here
+          </Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.text}>Login</Text>
-      </TouchableOpacity>
-      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : ""}
-      <TouchableOpacity >
-      <Text style={styles.login} onPress={register}>Don't have an account? Register here
-       </Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -78,8 +94,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+  },
+  overlay: {
+    flex: 1,
+    justifyContent: 'center',
     padding: 25,
-    backgroundColor: '#00ffff',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent overlay for readability
   },
   title: {
     fontSize: 30,
@@ -89,31 +109,27 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   input: {
-    borderWidth: 2,
-    color: '#00ffff',
-    backgroundColor: '#ee5f5f',
-    borderColor: '#2cfcfc',
+    borderWidth: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)', // Semi-transparent background
+    borderColor: '#fff',
     borderRadius: 10,
-    padding: 9,
+    padding: 10,
     marginBottom: 15,
-    marginLeft: 15,
-    marginRight: 15,
+    color: '#fff',
   },
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 2,
-    backgroundColor: '#ee5f5f',
-    borderColor: '#2cfcfc',
+    borderWidth: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: '#fff',
     borderRadius: 10,
     marginBottom: 15,
-    marginLeft: 15,
-    marginRight: 15,
   },
   passwordInput: {
     flex: 1,
-    padding: 9,
-    color: '#00ffff',
+    padding: 10,
+    color: '#fff',
   },
   toggleButton: {
     padding: 10,
@@ -121,38 +137,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   toggleText: {
-    color: '#00ffff',
+    color: '#fff',
     fontWeight: 'bold',
   },
   button: {
-    borderWidth: 2,
-    backgroundColor: '#ee5f5f',
-    borderColor: '#2cfcfc',
+    backgroundColor: '#28a745',
     borderRadius: 10,
     padding: 15,
-    marginLeft: 150,
-    marginRight: 150,
-    display:'inline',
+    alignItems: 'center',
   },
   text: {
-    color: '#00ffff',
+    color: '#fff',
     fontWeight: 'bold',
-    textAlign: 'center',
-    display:'inline',
   },
   login: {
     color: 'white',
     fontWeight: 'bold',
-    marginBottom: 25,
+    marginTop: 15,
     textAlign: 'center',
-    display:'inline',
   },
   errorText: {
     color: 'red',
     fontWeight: 'bold',
-    marginBottom:10,
     textAlign: 'center',
     marginTop: 10,
   },
-
 });
