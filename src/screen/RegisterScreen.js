@@ -4,13 +4,26 @@ import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'reac
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import auth from './Auth';
 import { Video } from 'expo-av';
-import LoginScreen from './LoginScreen';
+//import Video from 'react-native-video';
 
 export default function RegisterScreen({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmpassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  // const checklogin=()=>{
+  //   onAuthStateChanged(auth,(user) => {
+  //     if(user){
+  //       navigation.navigate('Chatbot')
+  //     }
+
+  //   })
+
+  // }
+  useEffect(()=>{
+    checklogin()
+  },[])
 
   const login = () => {
     navigation.navigate('Login');

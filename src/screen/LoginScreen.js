@@ -1,16 +1,30 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Video } from 'expo-av';
 import auth from './Auth';
-import RegisterScreen from './RegisterScreen';
+import { onAuthStateChanged } from 'firebase/auth';
+//import Video from 'react-native-video';
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  const checklogin=()=>{
+    onAuthStateChanged(auth,(user) => {
+      if(user){
+        navigation.navigate('Chatbot')
+      }
+
+    })
+
+  }
+  useEffect(()=>{
+    checklogin()
+  },[])
 
   const register = () => {
     navigation.navigate('Register');

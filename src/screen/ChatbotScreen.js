@@ -12,6 +12,8 @@ import {
 } from 'react-native';
 import { AppBar, IconButton, Button } from '@react-native-material/core';
 import { Ionicons } from '@expo/vector-icons';
+import { signOut } from 'firebase/auth';
+import auth from './Auth';
 
 export default function ChatbotScreen({ navigation }) {
   const [drawerOpen, setDrawerOpen] = useState(false); // State to manage drawer visibility
@@ -51,7 +53,10 @@ export default function ChatbotScreen({ navigation }) {
         },
         {
           text: "OK",
-          onPress: () => {navigation.navigate('Login')},
+          onPress: () => {
+            navigation.navigate('Login')
+          signOut(auth)
+          },
         },
       ],
       { cancelable: false }
