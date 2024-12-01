@@ -1,10 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity, BackHandler, } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Video } from 'expo-av';
 import auth from './Auth';
 import { onAuthStateChanged } from 'firebase/auth';
+import { CommonActions } from '@react-navigation/native';
 //import Video from 'react-native-video';
 
 export default function LoginScreen({ navigation }) {
@@ -16,7 +17,8 @@ export default function LoginScreen({ navigation }) {
   const checklogin=()=>{
     onAuthStateChanged(auth,(user) => {
       if(user){
-        navigation.navigate('Chatbot')
+        navigation.navigate('Chatbot');
+        
       }
 
     })
@@ -26,16 +28,41 @@ export default function LoginScreen({ navigation }) {
     checklogin()
   },[])
 
+  useEffect(() => {
+    const handleBackPress = () => {
+      Alert.alert(
+        'Exit App',
+        'Are you sure you want to exit?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'OK', onPress: () => BackHandler.exitApp() },
+        ],
+        { cancelable: false }
+      );
+      return true;
+    };
+
+    BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+    };
+  }, []);
+
   const register = () => {
     navigation.navigate('Register');
   };
 
   const handleLogin = async () => {
     try {
-      setErrorMessage('');
       await signInWithEmailAndPassword(auth, username, password);
       Alert.alert('Success', 'Logged in successfully');
-      navigation.navigate('Chatbot');
+      // Reset stack and navigate to ChatbotScreen
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Chatbot' }],
+        })
+      );
     } catch (error) {
       switch (error.code) {
         case 'auth/wrong-password':
@@ -58,6 +85,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <StatusBar style='auto'/>
       {/* Background Video */}
       <Video
         source={require('../../assets/background.mp4')}

@@ -1,9 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import React, { useState,useEffect } from 'react';
+import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity , BackHandler,} from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import auth from './Auth';
 import { Video } from 'expo-av';
+import { CommonActions } from '@react-navigation/native';
 //import Video from 'react-native-video';
 
 export default function RegisterScreen({ navigation }) {
@@ -12,22 +13,29 @@ export default function RegisterScreen({ navigation }) {
   const [confirmpassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  // const checklogin=()=>{
-  //   onAuthStateChanged(auth,(user) => {
-  //     if(user){
-  //       navigation.navigate('Chatbot')
-  //     }
-
-  //   })
-
-  // }
-  useEffect(()=>{
-    checklogin()
-  },[])
-
   const login = () => {
     navigation.navigate('Login');
   };
+
+  useEffect(() => {
+    const handleBackPress = () => {
+      Alert.alert(
+        'Exit App',
+        'Are you sure you want to exit?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'OK', onPress: () => BackHandler.exitApp() },
+        ],
+        { cancelable: false }
+      );
+      return true;
+    };
+
+    BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+    };
+  }, []);
 
   const handleRegister = () => {
     if (!username || !password || !confirmpassword) {
@@ -48,7 +56,13 @@ export default function RegisterScreen({ navigation }) {
     createUserWithEmailAndPassword(auth, username, password)
       .then((userCredential) => {
         Alert.alert('Success', 'User registered successfully!');
-        navigation.navigate('Chatbot'); // Navigate to Chatbot screen
+        navigation.navigate('Chatbot');
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'Chatbot' }],
+          })
+        );
       })
       .catch((error) => {
         Alert.alert('Error', error.message);
@@ -57,6 +71,7 @@ export default function RegisterScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+       <StatusBar style='auto'/>
       {/* Background Video */}
       <Video
         source={require('../../assets/background.mp4')}
