@@ -101,7 +101,7 @@ export default function ChatbotScreen({ navigation }) {
 
     Alert.alert(
       'Confirm Exit',
-      'Are you sure you want to exit?',
+      'Are you sure you want to Logout?',
       [
         {
           text: 'Cancel',
@@ -256,139 +256,118 @@ export default function ChatbotScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f1f1f1',
+    backgroundColor: '#f5f5f5',
   },
   appBar: {
     backgroundColor: '#4CAF50',
-    height: 70,
   },
   drawer: {
     position: 'absolute',
     top: 0,
     left: 0,
+    bottom: 0,
     width: 250,
-    height: '100%',
-    backgroundColor: '#fff',
-    paddingTop: 40,
-    paddingLeft: 20,
+    backgroundColor: '#ffffff',
+    zIndex: 2, // Ensure it's above main content
+    elevation: 5, // Shadow for Android
   },
   drawerTitle: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 20,
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
   drawerItem: {
-    marginBottom: 20,
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
   drawerText: {
-    fontSize: 18,
+    fontSize: 16,
+    color: '#333',
   },
   overlay: {
     position: 'absolute',
     top: 0,
     left: 0,
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-  },
-  logout: {
-    marginRight: 10,
-  },
-  logouttext: {
-    color: 'white',
-    fontWeight: 'bold',
+    bottom: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dark transparent overlay
+    zIndex: 1, // Ensure it's below the drawer but above the main content
   },
   messagesContainer: {
     flex: 1,
-    padding: 20,
-    paddingBottom: 80,
+    paddingHorizontal: 16,
+    marginBottom: 60, // Leave space for input container
   },
   messagesContent: {
-    paddingBottom: 80,
+    paddingTop: 16,
+    paddingBottom: 60,
   },
   messageContainer: {
-    marginBottom: 15,
+    marginBottom: 10,
     padding: 10,
-    borderRadius: 10,
-    maxWidth: '80%',
+    borderRadius: 8,
   },
   userMessage: {
-    backgroundColor: '#4CAF50',
-    alignSelf: 'flex-start',
+    alignSelf: 'flex-end',
+    backgroundColor: '#DCF8C6',
   },
   aiMessage: {
-    backgroundColor: '#e0e0e0',
-    alignSelf: 'flex-end',
+    alignSelf: 'flex-start',
+    backgroundColor: '#E8E8E8',
   },
   message: {
     fontSize: 16,
-    color: 'white',
   },
   inputContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#ffffff',
     flexDirection: 'row',
-    padding: 10,
     alignItems: 'center',
-    backgroundColor: '#fff',
     borderTopWidth: 1,
     borderTopColor: '#ccc',
+    padding: 8,
+    zIndex: 3, // Ensures it's always above the main content
   },
   input: {
     flex: 1,
     padding: 10,
-    borderRadius: 20,
-    backgroundColor: '#f1f1f1',
-    marginRight: 10,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    backgroundColor: '#f5f5f5',
   },
   toggleButton: {
     backgroundColor: '#4CAF50',
     padding: 10,
-    borderRadius: 20,
+    marginLeft: 8,
+    borderRadius: 8,
   },
   toggleText: {
     color: 'white',
-  },
-  newConversationButton: {
-    position: 'absolute',
-    bottom: 30,
-    left: 20,
-    right: 20,
-    backgroundColor: '#4CAF50',
-    padding: 15,
-    borderRadius: 50,
-    alignItems: 'center',
-  },
-
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    width: '80%',
-  },
-  modalTitle: {
-    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 15,
   },
-  historyItem: {
-    marginBottom: 10,
-    padding: 10,
-    backgroundColor: '#f1f1f1',
-    borderRadius: 5,
+  head: {
+    alignItems: 'center',
+    paddingVertical: 10,
   },
-  closeModalButton: {
-    backgroundColor: '#4CAF50',
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 10,
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
   },
-  closeModalText: {
+  logout: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  logoutText: {
+    fontSize: 16,
     color: 'white',
-    textAlign: 'center',
   },
 });
